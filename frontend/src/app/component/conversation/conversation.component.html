@@ -1,8 +1,10 @@
-<div class="w-full h-full flex justify-center items-center">
+<div class="w-full h-full flex justify-center items-center bg-green-500" *ngIf="!showNextComponent">
   <div class="flex flex-col gap-y-4">
     <h1 class="text-2xl font-bold">Welcome to NotebookLM</h1>
     <div class="flex flex-row justify-center">
-      <app-button text="Get Started" icon="arrow-right.svg"/>
+      <app-button text="Get Started" icon="arrow-right.svg" (click)="onGetStarted()"/>
     </div>
   </div>
 </div>
+
+<app-message *ngIf="showNextComponent"/>
