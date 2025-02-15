@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, EventEmitter, Output} from '@angular/core';
 @Component({
   selector: 'app-topbar',
   standalone: true,
@@ -6,5 +6,10 @@ import { Component } from '@angular/core';
   styleUrl: './topbar.component.css'
 })
 export class TopbarComponent {
+  @Output() selectionChanged = new EventEmitter<string>();
 
+  onSelectionChange(event: Event) {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+    this.selectionChanged.emit(selectedValue); // Emit the selected value
+  }
 }

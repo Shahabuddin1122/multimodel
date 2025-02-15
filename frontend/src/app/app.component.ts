@@ -10,4 +10,10 @@ import {ConversationComponent} from './component/conversation/conversation.compo
   styleUrl: 'app.component.css',
   imports: [SidebarComponent, TopbarComponent, ConversationComponent]
 })
-export class AppComponent{}
+export class AppComponent{
+  selectedModel = 'deepseek-r1:1.5b';
+
+  handleSelectionChange(value: string) {
+    this.selectedModel = value;
+  }
+}

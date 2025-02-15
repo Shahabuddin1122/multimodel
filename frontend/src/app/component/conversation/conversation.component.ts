@@ -1,4 +1,4 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
+import {Component, ElementRef, Input, ViewChild} from '@angular/core';
 import {ButtonComponent} from '../button/button.component';
 import {MessageComponent} from '../message/message.component';
 import {NgForOf, NgIf} from '@angular/common';
@@ -19,6 +19,7 @@ import { OllamaService } from '../../services/ollama.service';
   styleUrl: './conversation.component.css'
 })
 export class ConversationComponent {
+  @Input() selectedModel:string = 'deepseek-r1:1.5b';
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
   showNextComponent = false;
   messages = [
@@ -50,7 +51,7 @@ export class ConversationComponent {
         this.messages.push({ sender: 'llm', text: 'To ensure that no HTML tags appear in the LLM-generated text, you can sanitize the response by stripping out any HTML tags using a regular expression or a DOM parser.' });
         this.scrollToBottom();
       }, 500);
-      // this.ollamaService.generateResponse(this.userInput, "deepseek-r1:1.5b").subscribe(response => {
+      // this.ollamaService.generateResponse(this.userInput, this.selectedModel).subscribe(response => {
       //   let rawText = response.choices[0].message['content'];
       //   let sanitizedText = rawText.replace(/<\/?[^>]+(>|$)/g, "");
       //   console.log(sanitizedText);
