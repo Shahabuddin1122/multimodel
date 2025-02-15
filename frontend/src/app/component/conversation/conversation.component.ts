@@ -41,7 +41,8 @@ export class ConversationComponent {
       //   this.messages.push({ sender: 'llm', text: 'Processing your request...' });
       // }, 500);
       this.ollamaService.generateResponse(this.userInput, "deepseek-r1:1.5b").subscribe(response => {
-        this.messages.push({ sender: 'llm', text: response.response });
+        console.log(response.choices[0].message['content'])
+        this.messages.push({ sender: 'llm', text: response.choices[0].message['content'] });
       });
 
       this.userInput = '';
