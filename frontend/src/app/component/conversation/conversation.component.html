@@ -7,20 +7,18 @@
   </div>
 </div>
 
-<div class="px-4 py-8 flex flex-col justify-between h-full" *ngIf="showNextComponent">
-  <div class="flex-1">
+<div class="px-4 py-8 flex flex-col h-full" *ngIf="showNextComponent">
+  <div #messagesContainer class="flex-1 overflow-y-auto max-h-[70vh] pr-2">
     <app-message *ngFor="let message of messages" [message]="message"></app-message>
   </div>
 
-  <div class="flex items-center gap-4">
+  <div class="flex items-center gap-4 mt-4 border-t border-gray-300 pt-4">
     <input
       [(ngModel)]="userInput"
       placeholder="Type a message..."
       class="border border-black p-2 rounded w-full"
-      (keyup.enter) ="sendMessage()"
+      (keyup.enter)="sendMessage()"
     />
     <app-button text="Submit" icon="send.svg" (click)="sendMessage()"/>
   </div>
 </div>
-
-
