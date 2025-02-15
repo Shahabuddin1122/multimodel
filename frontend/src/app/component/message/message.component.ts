@@ -1,5 +1,4 @@
 import {Component, Input} from '@angular/core';
-import {ButtonComponent} from '../button/button.component';
 import {NgIf, NgOptimizedImage} from '@angular/common';
 
 @Component({
@@ -7,7 +6,6 @@ import {NgIf, NgOptimizedImage} from '@angular/common';
   standalone: true,
   templateUrl: './message.component.html',
   imports: [
-    ButtonComponent,
     NgIf,
     NgOptimizedImage
   ],
