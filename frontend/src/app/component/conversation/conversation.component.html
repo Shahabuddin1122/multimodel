@@ -1,4 +1,4 @@
-<div class="w-full h-full flex justify-center items-center bg-green-500" *ngIf="!showNextComponent">
+<div class="w-full h-full flex justify-center items-center" *ngIf="!showNextComponent">
   <div class="flex flex-col gap-y-4">
     <h1 class="text-2xl font-bold">Welcome to NotebookLM</h1>
     <div class="flex flex-row justify-center">
@@ -7,4 +7,20 @@
   </div>
 </div>
 
-<app-message *ngIf="showNextComponent"/>
+<div class="px-4 py-8 flex flex-col justify-between h-full" *ngIf="showNextComponent">
+  <div class="flex-1">
+    <app-message *ngFor="let message of messages" [message]="message"></app-message>
+  </div>
+
+  <div class="flex items-center gap-4">
+    <input
+      [(ngModel)]="userInput"
+      placeholder="Type a message..."
+      class="border border-black p-2 rounded w-full"
+      (keyup.enter) ="sendMessage()"
+    />
+    <app-button text="Submit" icon="send.svg" (click)="sendMessage()"/>
+  </div>
+</div>
+
+
