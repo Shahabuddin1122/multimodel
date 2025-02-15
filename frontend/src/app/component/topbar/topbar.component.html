@@ -1,11 +1,16 @@
 <div class="w-full h-16">
   <div class="h-full px-4 flex justify-between items-center">
-    <select name="cars" id="cars" class="md:w-[10rem] w-[8rem] text-sm md:text-lg font-semibold px-2 py-1 rounded-lg">
-      <option value="deepseek">Deepseek R1</option>
-      <option value="phi">Phi</option>
-      <option value="phi3">Phi3</option>
-      <option value="qwen0.5">Qwen0.5</option>
-      <option value="qwen1.8">Qwen1.8</option>
+    <select
+      name="cars"
+      id="cars"
+      class="md:w-[10rem] w-[8rem] text-sm md:text-lg font-semibold px-2 py-1 rounded-lg"
+      (change)="onSelectionChange($event)"
+    >
+      <option value="deepseek-r1:1.5b">Deepseek R1</option>
+      <option value="phi:latest">Phi</option>
+      <option value="phi3:latest">Phi3</option>
+      <option value="qwen:0.5b">Qwen0.5</option>
+      <option value="qwen:1.8b">Qwen1.8</option>
     </select>
     <div class="md:w-10 md:h-10 w-6 h-6 rounded-full bg-sky-300 overflow-hidden flex justify-center items-center">
         <img src="user.svg" alt="user" class="md:w-6 md:h-6 w-3 h-3">

@@ -8,8 +8,8 @@
     </div>
 
     <div class="flex-1 flex flex-col h-full">
-      <app-topbar class="w-full h-16 bg-primary"/>
-      <app-conversation class="w-full flex-1"/>
+      <app-topbar (selectionChanged)="handleSelectionChange($event)" class="w-full h-16 bg-primary"/>
+      <app-conversation [selectedModel]="selectedModel" class="w-full flex-1"/>
     </div>
 
   </div>
