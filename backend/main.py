@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from langchain_groq import ChatGroq
 from pydantic import BaseModel
 import httpx
 from typing import List
@@ -24,17 +25,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+chat_histories: dict[str, List[dict[str, str]]] = {}
+
 
 class RelatedDocumentsRequest(BaseModel):
     model: str
     query: str
     collection_id: str
-    top_k: int = 5  # Default to 5 results if not provided
+    top_k: int = 5
+    user_id: str
 
 
 class ChatRequest(BaseModel):
     model: str
     prompt: str
+    user_id: str
 
 
 # Initialize Vector Database & Embedding Model
@@ -83,25 +88,37 @@ def create_db(file_path, collection_name):
     return [doc.page_content for doc in texts]
 
 
-def get_llm_response(model, related_documents, query):
-    llm = ChatOllama(
-        model=model,
-        temperature=0,
-    )
+def get_llm_response(model, related_documents, query, user_id):
+    """Generates an LLM response using the retrieved related documents and chat history."""
+    llm = ChatGroq(temperature=0, groq_api_key="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", model_name=model)
+
+    # Retrieve previous chat history for the user
+    user_chat_history = chat_histories.get(user_id, [])
+
+    # Prepare chat history context
+    history_text = "\n".join([f"{m['role']}: {m['content']}" for m in user_chat_history])
 
     template = """Relevant Information: {doc}
 
-        Background: You are an expert assistant aiming to provide accurate and concise answers. If the user's 
-        question is in English, respond in English. If it's in Bangla, respond in Bangla. Your answer must be 
-        strictly based on the 'Relevant Information' above.
+    Chat History:
+    {history}
 
-        User Query: {user_question}
+    Background: You are an expert assistant aiming to provide accurate and concise answers. Maintain the conversation 
+    flow by considering previous messages. If the user's question is in English, respond in English. If it's in 
+    Bangla, respond in Bangla. Your answer must be strictly based on the 'Relevant Information' above.
 
-        (NO PREAMBLE)"""
+    User Query: {user_question}
+
+    (NO PREAMBLE)"""
 
     prompt_template = PromptTemplate.from_template(template)
     chain = prompt_template | llm
-    res = chain.invoke(input={'user_question': query, 'doc': related_documents})
+    res = chain.invoke(input={'user_question': query, 'doc': related_documents, 'history': history_text})
+
+    # Update chat history with the new message
+    chat_histories.setdefault(user_id, []).append({"role": "user", "content": query})
+    chat_histories[user_id].append({"role": "assistant", "content": res.content})
+
     return res.content
 
 
@@ -114,10 +131,15 @@ async def chat(request: ChatRequest):
                 "http://localhost:11434/v1/chat/completions",
                 json={
                     "model": request.model,
-                    "messages": [{"role": "user", "content": request.prompt}]
+                    "messages": chat_histories.get(request.user_id, []) + [{"role": "user", "content": request.prompt}]
                 }
             )
             response.raise_for_status()
+
+            # Store chat history
+            chat_histories.setdefault(request.user_id, []).append({"role": "user", "content": request.prompt})
+            chat_histories[request.user_id].append({"role": "assistant", "content": response.json()["choices"][0]["message"]["content"]})
+
             return response.json()
     except httpx.HTTPStatusError as e:
         raise HTTPException(status_code=e.response.status_code, detail=str(e))
@@ -189,7 +211,7 @@ async def get_related_documents(request: RelatedDocumentsRequest):
 
         combined_docs = "\n\n".join(doc_texts)
 
-        llm_response = get_llm_response(request.model, combined_docs, request.query)
+        llm_response = get_llm_response(request.model, combined_docs, request.query, request.user_id)
 
         return {
             "query": request.query,
