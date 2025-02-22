@@ -1,15 +1,22 @@
 <div class="w-full min-h-screen flex justify-center">
   <div class="max-w-screen-xl w-full py-4 bg-white shadow-lg flex flex-row min-h-screen">
     <div class="w-[20rem] h-full hidden md:block">
-      <app-sidebar class="h-full block"/>
+      <app-sidebar (selectModeChanged)="handleModeSelection($event)" class="h-full block"/>
     </div>
     <div class="w-16 h-full md:hidden">
-      <app-sidebar class="h-full block w-16"/>
+      <app-sidebar (selectModeChanged)="handleModeSelection($event)" class="h-full block w-16"/>
     </div>
 
     <div class="flex-1 flex flex-col h-full">
       <app-topbar (selectionChanged)="handleSelectionChange($event)" class="w-full h-16 bg-primary"/>
-      <app-conversation [selectedModel]="selectedModel" class="w-full flex-1"/>
+      <app-conversation
+        [collection_id]="collectionId"
+        [showNextComponent]="showNextComponent"
+        [selectedMode]="selectMode"
+        [uploadedFile]="uploadedFile"
+        [selectedModel]="selectedModel"
+        class="w-full flex-1"
+      />
     </div>
 
   </div>

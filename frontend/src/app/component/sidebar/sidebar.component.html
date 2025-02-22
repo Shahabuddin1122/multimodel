@@ -9,7 +9,21 @@
     </div>
   </div>
   <div class="py-5">
-    <app-button (click)="triggerFileUpload()" text="Create new" icon="add.svg" />
+    <app-button (click)="openModeSelection()" text="Create new" icon="add.svg" />
     <input #fileInput type="file" class="hidden" (change)="handleFileUpload($event)">
+  </div>
+
+  <div *ngIf="showModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <p class="text-lg font-bold mb-4">Select Mode</p>
+      <div class="flex gap-4">
+        <button (click)="selectMode('general')" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+          General Q&A
+        </button>
+        <button (click)="selectMode('document')" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+          Document Q&A
+        </button>
+      </div>
+    </div>
   </div>
 </div>
