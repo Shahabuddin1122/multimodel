@@ -1,14 +1,19 @@
 <div class="mb-2">
+  <!-- Document Message -->
   <div *ngIf="message.sender === 'document'" class="text-black gap-y-4">
-    <h1 class="text-2xl font-bold">📁 File Name: {{message.name}}</h1>
-    <p class="break-words whitespace-normal py-1">{{ message.text }}</p>
+    <h1 class="text-2xl font-bold">📁 File Name: {{ message.name }}</h1>
+    <p class="break-words whitespace-normal py-1" [innerHTML]="message.text"></p>
   </div>
-  <div *ngIf="message.sender === 'user'" class="text-blue-600 font-bold rounded-lg flex items-center flex-row-reverse gap-x-4">
-    <img ngSrc="user.svg" alt="llm" width="25" height="20" class="bg-slate-100 p-1 rounded-full overflow-hidden"/>
-    <p class="break-words whitespace-normal py-1">{{ message.text }}</p>
+
+  <!-- User Message -->
+  <div *ngIf="message.sender === 'user'" class="rounded-lg flex items-center flex-row-reverse gap-x-4">
+    <img ngSrc="user.svg" alt="user" width="25" height="20" class="bg-slate-100 p-1 rounded-full overflow-hidden"/>
+    <p class="break-words whitespace-normal py-1 px-4 bg-slate-100 rounded-2xl" [innerHTML]="message.text"></p>
   </div>
-  <div *ngIf="message.sender === 'llm'" class="w-full text-green-600 font-bold flex gap-x-4 items-start">
+
+  <!-- LLM Message -->
+  <div *ngIf="message.sender === 'llm'" class="w-full flex gap-x-4 items-start">
     <img ngSrc="ai.png" alt="llm" width="30" height="10" class="bg-slate-100 p-1 rounded-lg"/>
-    <p class="break-words whitespace-normal ">{{ message.text }}</p>
+    <p class="break-words whitespace-normal" [innerHTML]="message.text"></p>
   </div>
 </div>
