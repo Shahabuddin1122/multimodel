@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ChatService {
-  private ollamaApiUrl = 'http://localhost:8000/chat';
-  private llamaApiUrl = 'http://localhost:8000/related-documents'; // Change if needed
+  private ollamaApiUrl = 'http://103.159.218.178:3000/general-chat';
+  private llamaApiUrl = 'http://103.159.218.178:3000/documents-response'; // Change if needed
 
   constructor(private http: HttpClient) {}
 

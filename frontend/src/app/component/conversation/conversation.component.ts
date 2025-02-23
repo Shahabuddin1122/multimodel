@@ -26,11 +26,12 @@ export class ConversationComponent implements OnInit, OnChanges {
   @Input() showNextComponent = false; // initial page and conversation page
   @Input() collection_id = '';  // unique id for each document
   @Input() documentContent: string = ''; // document content
-  @Input() messages: { sender: string, name?: string, text: string }[] = []
+  @Input() messages: { sender: string, name?: string, text: string }[] = [];
+
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
+  @ViewChild('messageBox') messageBox!: ElementRef;
 
   userId = uuidv4();
-  userInput = '';
   documentInitialized = false; // Flag to check if document content is added
 
   constructor(private chatService: ChatService) {}
@@ -70,37 +71,45 @@ export class ConversationComponent implements OnInit, OnChanges {
     }, 100);
   }
 
+  handleKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault(); // Prevent new line
+      this.sendMessage();
+    }
+  }
+
   sendMessage() {
-    if (this.userInput.trim()) {
-      this.messages.push({ sender: 'user', text: this.userInput });
+    const messageContent = this.messageBox.nativeElement.innerHTML.trim();
+    if (!messageContent) return;
 
-      if (this.selectedMode === 'general') {
-        setTimeout(() => {
-          this.messages.push({
-            sender: 'llm',
-            text: 'To ensure that no HTML tags appear in the LLM-generated text, you can sanitize the response by stripping out any HTML tags using a regular expression or a DOM parser.'
-          });
-          this.scrollToBottom();
-        }, 500);
-      } else if (this.selectedMode === 'document' && this.uploadedFile) {
-        // Ensure document content is initialized
-        this.initializeDocumentContent();
+    this.messages.push({ sender: 'user', text: messageContent });
 
-        // Query the document-based LLM
-        this.chatService.queryLlama(
-          'llama3-8b-8192',
-          this.userInput,
-          this.collection_id,
-          3,
-          this.userId
-        ).subscribe(response => {
-          let rawText = response?.llm_response || 'No response';
+    if (this.selectedMode === 'general') {
+      this.chatService.generateResponse(messageContent, this.selectedModel, this.userId)
+        .subscribe(response => {
+          let rawText = response.choices[0]?.message?.content || 'No response';
           let sanitizedText = rawText.replace(/<\/?[^>]+(>|$)/g, "");
           this.messages.push({ sender: 'llm', text: sanitizedText });
           this.scrollToBottom();
         });
-      }
-      this.userInput = '';
+
+    } else if (this.selectedMode === 'document' && this.uploadedFile) {
+      this.initializeDocumentContent();
+
+      this.chatService.queryLlama(
+        this.selectedModel,
+        messageContent,
+        this.collection_id,
+        3,
+        this.userId
+      ).subscribe(response => {
+        let rawText = response?.llm_response || 'No response';
+        let sanitizedText = rawText.replace(/<\/?[^>]+(>|$)/g, "");
+        this.messages.push({ sender: 'llm', text: sanitizedText });
+        this.scrollToBottom();
+      });
     }
+
+    this.messageBox.nativeElement.innerHTML = ''; // Clear input
   }
 }
