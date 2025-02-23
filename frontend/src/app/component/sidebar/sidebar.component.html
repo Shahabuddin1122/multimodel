@@ -10,7 +10,7 @@
   </div>
   <div class="py-5">
     <app-button (click)="openModeSelection()" text="Create new" icon="add.svg" />
-    <input #fileInput type="file" class="hidden" (change)="handleFileUpload($event)">
+    <input #fileInput type="file" accept=".txt" class="hidden" (change)="handleFileUpload($event)">
   </div>
 
   <div *ngIf="showModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
