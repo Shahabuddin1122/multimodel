@@ -19,11 +19,13 @@ export class AppComponent {
   showNextComponent = false;
   collectionId = '';
   documentContent = '';
+  messages: { sender: string, name?: string, text: string }[] = []
 
   constructor(private documentUploadService: DocumentUploadService) {}
 
   handleModeSelection(event: { mode: string; file?: File }) {
     this.selectMode = event.mode;
+    this.messages = [];
 
     if (event.mode === 'document' && event.file) {
       this.uploadedFile = event.file;
@@ -39,6 +41,7 @@ export class AppComponent {
   }
 
   uploadDocument(file: File) {
+    this.messages = [];
     this.documentUploadService.uploadFile(file).subscribe(event => {
       if (event.type === HttpEventType.Response) {
         this.collectionId = event.body.files[0]['collection_id'];

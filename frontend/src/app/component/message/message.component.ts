@@ -12,5 +12,5 @@ import {NgIf, NgOptimizedImage} from '@angular/common';
   styleUrl: './message.component.css'
 })
 export class MessageComponent {
-  @Input() message: { sender: string; text: string, name: string } = { sender: '', text: '', name: '' };
+  @Input() message: { sender: string; text: string, name?: string } = { sender: '', text: '', name: '' };
 }

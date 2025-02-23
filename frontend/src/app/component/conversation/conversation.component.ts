@@ -26,10 +26,10 @@ export class ConversationComponent implements OnInit, OnChanges {
   @Input() showNextComponent = false; // initial page and conversation page
   @Input() collection_id = '';  // unique id for each document
   @Input() documentContent: string = ''; // document content
+  @Input() messages: { sender: string, name?: string, text: string }[] = []
   @ViewChild('messagesContainer') messagesContainer!: ElementRef;
 
   userId = uuidv4();
-  messages: { sender: string, name?: string, text: string }[] = [];
   userInput = '';
   documentInitialized = false; // Flag to check if document content is added
 
