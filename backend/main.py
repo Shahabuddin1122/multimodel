@@ -12,8 +12,9 @@ from sentence_transformers import SentenceTransformer
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema import Document
 import chardet
-from langchain_ollama import ChatOllama
 from langchain_core.prompts import PromptTemplate
+from langchain_community.llms import Ollama
+
 
 app = FastAPI()
 
@@ -90,7 +91,7 @@ def create_db(file_path, collection_name):
 
 def get_llm_response(model, related_documents, query, user_id):
     """Generates an LLM response using the retrieved related documents and chat history."""
-    llm = ChatGroq(temperature=0, groq_api_key="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", model_name=model)
+    llm = Ollama(model=model, temperature=0)
 
     # Retrieve previous chat history for the user
     user_chat_history = chat_histories.get(user_id, [])
@@ -114,15 +115,14 @@ def get_llm_response(model, related_documents, query, user_id):
     prompt_template = PromptTemplate.from_template(template)
     chain = prompt_template | llm
     res = chain.invoke(input={'user_question': query, 'doc': related_documents, 'history': history_text})
-
     # Update chat history with the new message
     chat_histories.setdefault(user_id, []).append({"role": "user", "content": query})
-    chat_histories[user_id].append({"role": "assistant", "content": res.content})
+    chat_histories[user_id].append({"role": "assistant", "content": res})
 
-    return res.content
+    return res
 
 
-@app.post("/chat")
+@app.post("/general-chat")
 async def chat(request: ChatRequest):
     """Handles AI chat requests."""
     try:
@@ -131,6 +131,7 @@ async def chat(request: ChatRequest):
                 "http://localhost:11434/v1/chat/completions",
                 json={
                     "model": request.model,
+                    "temperature": 0,
                     "messages": chat_histories.get(request.user_id, []) + [{"role": "user", "content": request.prompt}]
                 }
             )
@@ -182,7 +183,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
     }
 
 
-@app.post("/related-documents")
+@app.post("/documents-response")
 async def get_related_documents(request: RelatedDocumentsRequest):
     """Retrieve related documents and generate an LLM response using RAG."""
     try:
