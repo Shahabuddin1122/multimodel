@@ -18,6 +18,7 @@ export class AppComponent {
   uploadedFile?: File;
   showNextComponent = false;
   collectionId = '';
+  documentContent = '';
 
   constructor(private documentUploadService: DocumentUploadService) {}
 
@@ -26,7 +27,7 @@ export class AppComponent {
 
     if (event.mode === 'document' && event.file) {
       this.uploadedFile = event.file;
-      this.uploadDocument(event.file); // Call upload service
+      this.uploadDocument(event.file);
     } else {
       this.uploadedFile = undefined;
       this.showNextComponent = true;
@@ -41,6 +42,7 @@ export class AppComponent {
     this.documentUploadService.uploadFile(file).subscribe(event => {
       if (event.type === HttpEventType.Response) {
         this.collectionId = event.body.files[0]['collection_id'];
+        this.documentContent = event.body.files[0]['extracted_texts'][0]
         this.showNextComponent = true;
       }
     }, error => {
