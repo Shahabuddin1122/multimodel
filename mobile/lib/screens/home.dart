@@ -52,7 +52,9 @@ class Home extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushNamed(context, '/chat');
+        },
         child: const Icon(
           Icons.add,
           color: PRIMARY_COLOR,
