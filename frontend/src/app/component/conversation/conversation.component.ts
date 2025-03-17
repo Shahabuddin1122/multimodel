@@ -99,12 +99,13 @@ export class ConversationComponent implements OnInit, OnChanges {
       this.chatService.queryLlama(
         this.selectedModel,
         messageContent,
+        this.uploadedFile.name,
         this.collection_id,
         3,
-        this.userId
+        this.userId,
       ).subscribe(response => {
         let rawText = response?.llm_response || 'No response';
-        let sanitizedText = rawText.replace(/<\/?[^>]+(>|$)/g, "");
+        let sanitizedText = rawText.replace(/<think>[\s\S]*?<\/think>\s*/, "").trim();
         this.messages.push({ sender: 'llm', text: sanitizedText });
         this.scrollToBottom();
       });

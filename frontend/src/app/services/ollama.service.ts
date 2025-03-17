@@ -17,12 +17,13 @@ export class ChatService {
   }
 
   // Function for LlamaService
-  queryLlama(model: string, query: string, collectionId: string, topK: number, userId: string): Observable<any> {
+  queryLlama(model: string, query: string, file_name:string, collectionId: string, topK: number, userId: string): Observable<any> {
     const requestBody = {
       model: model,
       query: query,
       collection_id: collectionId,
       top_k: topK,
+      file_name: file_name,
       user_id: userId
     };
     return this.http.post<any>(this.llamaApiUrl, requestBody);
